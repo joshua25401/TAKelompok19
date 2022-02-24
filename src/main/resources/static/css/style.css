@@ -1,0 +1,19 @@
+body{
+    height: 100%;
+}
+
+.container{
+    height: 100%;
+    background-color: grey;
+    display: flex;
+    /* Center Vertically */
+    align-items: center;
+    /* Center Horizontally */
+    justify-content: center;
+}
+
+.dashboard-item{
+    background-color: lightblue;
+    width: 500px;
+    height: 500px;
+}
