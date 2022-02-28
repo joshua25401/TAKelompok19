@@ -169,7 +169,7 @@ footer{
 
 
 
-/* BASIC */
+/* Login CSS */
 
 
 
@@ -198,54 +198,18 @@ h2 {
 
 
 /* STRUCTURE */
-
-.wrapper {
-  display: flex;
-  align-items: center;
-  flex-direction: column; 
-  justify-content: center;
-  width: 100%;
-  min-height: 100%;
-  padding: 20px;
-}
-
 #formContent {
   -webkit-border-radius: 10px 10px 10px 10px;
   border-radius: 10px 10px 10px 10px;
   background: #fff;
   padding: 30px;
-  width: 90%;
-  max-width: 450px;
+  width: 100%;
+  max-width: 500px;
   position: relative;
-  padding: 0px;
   -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
   box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
   text-align: center;
 }
-
-#formFooter {
-  background-color: #f6f6f6;
-  border-top: 1px solid #dce8f1;
-  padding: 25px;
-  text-align: center;
-  -webkit-border-radius: 0 0 10px 10px;
-  border-radius: 0 0 10px 10px;
-}
-
-
-
-/* TABS */
-
-h2.inactive {
-  color: #cccccc;
-}
-
-h2.active {
-  color: #0d0d0d;
-  border-bottom: 2px solid #5fbae9;
-}
-
-
 
 /* FORM TYPOGRAPHY*/
 
@@ -429,21 +393,3 @@ input[type=text]:placeholder {
   width:60%;
 }
 
-/* CSS Jam Digital */
-@import url('https://fonts.googleapis.com/css?family=Ruluko');
-body {
-  font-family: 'Ruluko', sans-serif;
-}
-
-#watch {
-  color: rgb(250, 248, 244);
-  position: fixed;
-  z-index: 1;
-  height: 1.4em;
-  width: 3.8em;
-  overflow: show;
-  margin-left: 2vw;
-   font-size: 2vw;
-  -webkit-text-stroke: 3px rgb(144, 158, 235);
- 
-}
