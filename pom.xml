@@ -31,6 +31,20 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+    <version>2.6.4</version>
+</dependency>
+
+
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.13.2</version>
+</dependency>
+
 	</dependencies>
 
 	<build>
@@ -41,5 +55,6 @@
 			</plugin>
 		</plugins>
 	</build>
+
 
 </project>
