@@ -97,10 +97,10 @@ public class DocumentServices {
         }
     }
 
-    public void upload(MultipartFile file) throws IOException, ElasticsearchException {
+    public boolean upload(MultipartFile file) throws IOException, ElasticsearchException {
         if(file.isEmpty()) {
             log.info("File is empty");
-            return;
+            return false;
         }else{
             /*Ini untuk Upload file ke Disk*/
             /*
@@ -158,6 +158,7 @@ public class DocumentServices {
 
         IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
         log.info("Indexing file {} with response {}", file.getOriginalFilename(), response.status());
+        return true;
     }
 
     private boolean pipelineExists(String pipeLine) throws IOException {
