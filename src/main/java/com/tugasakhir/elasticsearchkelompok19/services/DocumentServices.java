@@ -6,6 +6,8 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.ingest.GetPipelineRequest;
 import org.elasticsearch.action.ingest.GetPipelineResponse;
 import org.elasticsearch.action.ingest.PutPipelineRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -14,7 +16,14 @@ import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.ScoreSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +31,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class DocumentServices {
@@ -46,13 +59,57 @@ public class DocumentServices {
     @Value("${elasticsearch.number_of_replicas}")
     private Integer number_of_replicas;
 
+    /*PATH Value*/
+    @Value("${pdf.upload.path}")
+    private String pdfLocalPath;
+
     @Autowired
     private RestHighLevelClient client;
 
-    public boolean upload(MultipartFile file) throws IOException, ElasticsearchException {
+    public void fullTextSearch(String query)  {
+
+        /*
+        *   Add Search Rules Request
+        * */
+        MultiMatchQueryBuilder multiMatchQueryBuilder = new MultiMatchQueryBuilder(query)
+                .field("attachment.content")
+                .fuzziness(Fuzziness.AUTO);
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
+                .query(multiMatchQueryBuilder)
+                .sort(new ScoreSortBuilder().order(SortOrder.DESC));
+
+        SearchRequest searchRequest = new SearchRequest(indexName)
+                .source(searchSourceBuilder);
+
+        try {
+            SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+            SearchHits hits = searchResponse.getHits();
+
+            SearchHit[] searchHits = hits.getHits();
+            for (SearchHit hit : searchHits) {
+                Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+                Map<String, Object> attachment = (Map<String, Object>) sourceAsMap.get("attachment");
+                log.info("{}", attachment.get("content"));
+            }
+        } catch (IOException e) {
+            log.error("Error while searching for documents {}", e.getMessage());
+        }
+    }
+
+    public void upload(MultipartFile file) throws IOException, ElasticsearchException {
         if(file.isEmpty()) {
             log.info("File is empty");
-            return false;
+            return;
+        }else{
+            /*Ini untuk Upload file ke Disk*/
+            /*
+            * Path Directory :
+            *   - /resources/uploaded-pdf/
+            * */
+            String fileName = renameFile(Objects.requireNonNull(file.getOriginalFilename()).toLowerCase());
+            Path path = Paths.get("").toAbsolutePath().resolve(pdfLocalPath + fileName);
+            file.transferTo(new File(path.toString()));
         }
 
         Map<String, Object> mapping = new HashMap<>();
@@ -80,7 +137,10 @@ public class DocumentServices {
                                 +"{"
                                     +"\"field\": \"data\""
                                 +"}"
-                        +"}]"
+                        +"},{"
+                                +"\"remove:{"
+                                    +"\"field\": \"data\""
+                                +"}]"
                     +"}";
 
                 PutPipelineRequest pipelineRequest = new PutPipelineRequest(pipeLine, new BytesArray(source.getBytes(StandardCharsets.UTF_8)), XContentType.JSON);
@@ -98,7 +158,6 @@ public class DocumentServices {
 
         IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
         log.info("Indexing file {} with response {}", file.getOriginalFilename(), response.status());
-        return true;
     }
 
     private boolean pipelineExists(String pipeLine) throws IOException {
@@ -113,6 +172,14 @@ public class DocumentServices {
         boolean exists = client.indices().exists(request,RequestOptions.DEFAULT);
         log.info("Index {} exists", indexName);
         return exists;
+    }
+
+    private String renameFile(String filename){
+        String pdfExtention = filename.substring(filename.lastIndexOf(".") + 1);
+        String encode = Base64.getEncoder().encodeToString(filename.substring(filename.lastIndexOf(".")).getBytes(StandardCharsets.UTF_8));
+        String newFilename = encode + System.currentTimeMillis() +"." + pdfExtention;
+        log.info("New filename {}", newFilename);
+        return newFilename;
     }
 
 }

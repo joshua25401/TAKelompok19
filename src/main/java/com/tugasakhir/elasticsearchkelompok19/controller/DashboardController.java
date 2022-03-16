@@ -6,9 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -39,9 +37,18 @@ public class DashboardController {
             services.upload(file);
             return "redirect:/upload";
         }catch (IOException | ElasticsearchException e){
-            log.error("Error: "+ e.getMessage());
+            e.printStackTrace();
         }
         return "redirect:/upload";
+    }
+
+    @GetMapping(value="/search/q={query}")
+    public String search(
+            @PathVariable("query") String query
+    ) {
+        services.fullTextSearch(query);
+
+        return "redirect:/";
     }
 
 }
