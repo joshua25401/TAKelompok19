@@ -33,10 +33,15 @@ public class ElasticConfig extends AbstractElasticsearchConfiguration {
     @Bean
     @Override
     public RestHighLevelClient elasticsearchClient() {
-        final ClientConfiguration clientConfiguration = ClientConfiguration.builder()
+        try{
+            final ClientConfiguration clientConfiguration = ClientConfiguration.builder()
                 .connectedTo(elasticUrl)
                 .build();
-        log.info("Connected to Elasticsearch!");
-        return RestClients.create(clientConfiguration).rest();
+            log.info("Connected to Elasticsearch!");
+            return RestClients.create(clientConfiguration).rest();
+        }catch (Exception e){
+            log.error("Error connecting to Elasticsearch! : " + e.getMessage());
+            return null;
+        }
     }
 }

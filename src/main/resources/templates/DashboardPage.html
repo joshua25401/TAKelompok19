@@ -9,7 +9,7 @@
   </head>
 
   <body>
-    
+
     <nav>
       <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -26,8 +26,8 @@
       </div>
       <div class="modal-body">
         <div id="formContent">
-        <form>
-          <input type="text" id="login" class="fadeIn second" name="login" placeholder="Username" required autofocus>
+        <form th:action="@{/login}" method="post">
+          <input type="text" id="login" class="fadeIn second" name="username" placeholder="Username" required autofocus>
           <input type="password" id="password" class="fadeIn third" name="password" placeholder="Password" required>
           <input type="submit" class="fadeIn fourth" value="Sign In">
         </form>
@@ -39,7 +39,7 @@
       </nav>
       <section class="section-1">
       	<img src="img/icon.jpg" class="logo">
-      	<form><br><br>
+      	<form th:action="@{/search}" method="get">"><br><br>
       		<div class="s-box">
       			<img src="img/search.png" class="search-icon">
       			<input type="text" class="s-input">
@@ -47,7 +47,7 @@
       	</form>
       </section>
       <footer>
-        <h4>Copyright &copy; Kelompok 19 D3 TI 2019 </h4>     
+        <h4>Copyright &copy; Kelompok 19 D3 TI 2019 </h4>
       </footer>
   </body>
 </html>

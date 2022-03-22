@@ -1,5 +1,7 @@
 package com.tugasakhir.elasticsearchkelompok19.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tugasakhir.elasticsearchkelompok19.model.PDFDocument;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
@@ -36,10 +38,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class DocumentServices {
@@ -66,10 +65,28 @@ public class DocumentServices {
     @Autowired
     private RestHighLevelClient client;
 
-    public void fullTextSearch(String query)  {
+    /*
+    * Fungsi fullTextSearch(String query)
+    * akan menerima string query yang akan di-search
+    * Kemudian fungsi ini akan mengembalikan list dari hasil pencarian jika ada
+    * Namun, jika tidak ada hasil pencarian yang ditemukan maka fungsi ini akan mengembalikan nilai NULL
+    * */
+    public List<PDFDocument> fullTextSearch(String query)  {
 
+        // List of PDFDocument hasil searching
+        List<PDFDocument> pdfDocuments = new ArrayList<>();
+
+        // Membuat SearchRequest berdasarkan rules yang digunakan.
         /*
-        *   Add Search Rules Request
+        * Daftar Rules yang digunakan untuk pencarian :
+        *   1. MultiMatchQueryBuilder : mencari berdasarkan kata yang dicari di beberapa field dengan menambah aturan fuzzy
+        *    - Fuzziness : menentukan jika kata yang dicari tidak ditemukan, maka kata yang dicari akan dicari dengan kata yang lebih dekat.
+        *
+        *   2. SearchSourceBuilder : mengatur rules untuk mencari dan mengurutkan hasil pencarian
+        *    - SortOrder : menentukan urutan hasil pencarian
+        *    - ScoreSortBuilder : mengurutkan hasil pencarian berdasarkan score dari hasil pencarian
+        *
+        *   3. SearchRequest : membuat query hasil pencarian dengan rules yang telah ditentukan
         * */
         MultiMatchQueryBuilder multiMatchQueryBuilder = new MultiMatchQueryBuilder(query)
                 .field("attachment.content")
@@ -83,20 +100,49 @@ public class DocumentServices {
                 .source(searchSourceBuilder);
 
         try {
+
+            /*
+            *   Pada bagian ini akan dilakukan pencarian hasil pencarian dengan rules yang telah ditentukan
+            *
+            *   1. SearchResponse : mengambil hasil pencarian dari Elasticsearch dengan searchRequest yang sebelumnya telah dibuat
+            *
+            *   2. SearchHits : mengambil hasil pencarian dari SearchResponse yang sebelumnya telah dibuat
+            *
+            *   3. SearchHit : mengambil hasil pencarian dari SearchHits
+            * */
             SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
             SearchHits hits = searchResponse.getHits();
 
             SearchHit[] searchHits = hits.getHits();
-            for (SearchHit hit : searchHits) {
-                Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-                Map<String, Object> attachment = (Map<String, Object>) sourceAsMap.get("attachment");
-                log.info("{}", attachment.get("content"));
+
+
+            if(searchHits.length > 0){
+                for (SearchHit hit : searchHits) {
+                    Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+                    Map<String, Object> attachment = (HashMap<String, Object>) sourceAsMap.get("attachment");
+                    ObjectMapper mapper = new ObjectMapper();
+                    pdfDocuments.add(mapper.convertValue(attachment, PDFDocument.class));
+                    log.debug("pdfDocumentsSize : {}", pdfDocuments.size());
+                }
+                return pdfDocuments;
+            }else{
+                return null;
             }
         } catch (IOException e) {
             log.error("Error while searching for documents {}", e.getMessage());
+            return null;
         }
     }
 
+
+    /*
+    * fungsi uploadPdf(MultipartFile file) digunakan untuk mengupload file pdf ke disk dan mengindeks file ke elasticsearch
+    * fungsi ini akan mengembalikan nilai boolean ketika proses upload sukses atau tidak
+    * fungsi ini juga akan mendapat exception ketika terjadi kesalahan (IOException, ElasticsearchException)
+    *
+    *   1. IOException : Exception yang akan ditangkap ketika terjadi kesalahan pada proses upload file
+    *   2. ElasticsearchException : Exception yang akan ditangkap ketika terjadi kesalahan pada proses indexing file
+    * */
     public boolean upload(MultipartFile file) throws IOException, ElasticsearchException {
         if(file.isEmpty()) {
             log.info("File is empty");
