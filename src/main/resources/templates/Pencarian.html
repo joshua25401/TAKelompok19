@@ -1,0 +1,70 @@
+<html xmlns:th="http://thymeleaf.org"></html>
+<head>
+    <title>Pencarian</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="card mt-5">
+        
+       <div class="card-body">
+        <form id="form_search" method="post">
+          <div class="mb-3">
+            <label class="form-label">Cari Artikel</label>
+            <input type="text" class="form-control" id="search" name="search" placeholder="Cari disini...">
+          </div>
+          <button type="submit" class="btn btn-warning text-white">Cari</button>
+        </form>
+      </div>
+    </div>
+    <div class="list-group">
+
+      <div href="#" class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1 text-center"><center>Tidak ada data yang ditemukan</center></h5>
+        </div>
+    </div>
+</div>
+    <div class="card mt-5">
+      <div class="card-header">
+       Hasil Pencarian
+     </div>
+     <div class="card-body">
+
+      <div class="hasil" id="hasil"></div>
+      <hr>
+  <h4 class="mb-3 text-center">Rekomendasi yang relevan dengan keyword</h4>
+  <div class="list-group">
+        <div class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">ELASTICSEARCH</h5>
+          </div>
+          <p class="mb-1 text-muted"><small>Elasticsearch merupakan mesin pencari dan analitik terdistribusi yang dibangun pada Apache Lucene. Sejak diluncurkan pada tahun 2010, Elasticsearch telah dengan cepat menjadi mesin pencari paling populer dan biasa digunakan untuk analisis log, pencarian teks lengkap, inteligensi keamanan, analisis bisnis, dan kasus penggunaan inteligensi operasional.</small></p>
+          <button type="submit" class="btn btn-warning text-white">next</button>
+      </div>
+      <div class="list-group">
+        <div class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Springboot</h5>
+          </div>
+          <p class="mb-1 text-muted"><small>Spring Boot merupakan salah satu jenis framework dari Spring. Namun di Spring Boot , kita lebih dipermudah dalam pembuatan program karena : Sudah disediakan Tomcat dan beberapa server lain, sehingga kita hanya perlu run. Menggunakan Maven sebagai build manager yang dapat kita atur di Project Object Model (POM)</small></p>
+          <button type="submit" class="btn btn-warning text-white">next</button>
+      </div>
+      <div class="list-group">
+        <div class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">JAVA</h5>
+          </div>
+          <p class="mb-1 text-muted"><small>Java untuk apa sih?
+            Java adalah bahasa pemrograman yang biasa digunakan untuk mengembangkan bagian back-end dari software, aplikasi Android, dan juga website. Java juga dikenal memiliki moto “Write Once, Run Anywhere”. Artinya, Java mampu dijalankan di berbagai platform tanpa perlu disusun ulang menyesuaikan platformnya</small></p>
+          <button type="submit" class="btn btn-warning text-white">next</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
