@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+
 @Data
 @ToString
 @NoArgsConstructor
@@ -23,6 +25,9 @@ public class PDFDocument {
     @SerializedName("title")
     private String title;
 
-    @SerializedName("author")
-    private String author;
+    @SerializedName("file_name")
+    private String fileName;
+
+    @SerializedName("authors")
+    private List<String> authors;
 }
