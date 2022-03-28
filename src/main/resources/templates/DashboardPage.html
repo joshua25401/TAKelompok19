@@ -1,53 +1,62 @@
 <html xmlns:th="http://thymeleaf.org">
-  <head>
+<head>
     <title>Dashboard</title>
-    <link th:href="@{/css/style.css}" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script th:src="@{/js/script.js}"></script>
-  </head>
+</head>
 
-  <body>
-    <nav>
-      <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
- Sign In
-</button>
+<body>
+<nav>
+    <!-- Button trigger modal -->
+    <button th:if="${#session.getAttribute('userLogin') == null}" type="button" class="btn btn-primary"
+            data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Sign In
+    </button>
+    <a th:if="${!(#session.getAttribute('userLogin') == null)}" class="btn btn-primary"
+       th:href="@{/admin/}">
+        Tambah Data
+    </a>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Login</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="formContent">
-        <form th:action="@{/login}" method="post">
-          <input type="text" id="login" class="fadeIn second" name="username" placeholder="Username" required autofocus>
-          <input type="password" id="password" class="fadeIn third" name="password" placeholder="Password" required>
-          <input type="submit" class="fadeIn fourth" value="Sign In">
-        </form>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="formContent">
+                        <form th:action="@{/login}" method="post">
+                            <input type="text" id="login" class="fadeIn second" name="username" placeholder="Username"
+                                   required autofocus>
+                            <input type="password" id="password" class="fadeIn third" name="password"
+                                   placeholder="Password" required>
+                            <input type="submit" class="fadeIn fourth" value="Sign In">
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
+</nav>
+<section class="section-1">
+    <img src="img/icon.jpg" class="logo">
+    <form th:action="@{/pencarian/search}" method="get"><br><br>
+        <div class="s-box">
+            <img src="img/search.png" class="search-icon">
+            <input type="text" class="keyword" name="keyword">
         </div>
-      </div>
-  </div>
-</div>
-      </nav>
-      <section class="section-1">
-      	<img src="img/icon.jpg" class="logo">
-      	<form th:action="@{/search}" method="get"><br><br>
-      		<div class="s-box">
-      			<img src="img/search.png" class="search-icon">
-      			<input type="text" class="s-input">
-            <form th:action="@{/pencarian}" method="get"><br><br>
-      			</div>
-      	</form>
-      </section>
-      <footer>
-        <h4>Copyright &copy; Kelompok 19 D3 TI 2019 </h4>
-      </footer>
-  </body>
+    </form>
+</section>
+<footer>
+    <h4>Copyright &copy; Kelompok 19 D3 TI 2019 </h4>
+</footer>
+</body>
 </html>

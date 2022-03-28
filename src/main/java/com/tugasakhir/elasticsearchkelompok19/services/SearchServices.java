@@ -8,6 +8,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -46,66 +47,107 @@ public class SearchServices {
     private RestHighLevelClient client;
 
     /*
-    * Fungsi fullTextSearch(String query)
-    * akan menerima string query yang akan di-search
-    * Kemudian fungsi ini akan mengembalikan list dari hasil pencarian jika ada
-    * Namun, jika tidak ada hasil pencarian yang ditemukan maka fungsi ini akan mengembalikan nilai NULL
-    * */
-    public List<PDFDocument> fullTextSearch(String query)  {
+     * Fungsi fullTextSearch(String query)
+     * akan menerima string query yang akan di-search
+     * Kemudian fungsi ini akan mengembalikan list dari hasil pencarian jika ada
+     * Namun, jika tidak ada hasil pencarian yang ditemukan maka fungsi ini akan mengembalikan nilai NULL
+     * */
+    public List<PDFDocument> fullTextSearch(String query) {
 
         // List of PDFDocument hasil searching
         List<PDFDocument> pdfDocuments = new ArrayList<>();
 
         // Membuat SearchRequest berdasarkan rules yang digunakan.
         /*
-        * Daftar Rules yang digunakan untuk pencarian :
-        *   1. MultiMatchQueryBuilder : mencari berdasarkan kata yang dicari di beberapa field dengan menambah aturan fuzzy
-        *    - Fuzziness : menentukan jika kata yang dicari tidak ditemukan, maka kata yang dicari akan dicari dengan kata yang lebih dekat.
-        *
-        *   2. SearchSourceBuilder : mengatur rules untuk mencari dan mengurutkan hasil pencarian
-        *    - SortOrder : menentukan urutan hasil pencarian
-        *    - ScoreSortBuilder : mengurutkan hasil pencarian berdasarkan score dari hasil pencarian
-        *
-        *   3. SearchRequest : membuat query hasil pencarian dengan rules yang telah ditentukan
-        * */
+         * Daftar Rules yang digunakan untuk pencarian :
+         *   1. MultiMatchQueryBuilder : mencari berdasarkan kata yang dicari di beberapa field dengan menambah aturan fuzzy
+         *    - Fuzziness : menentukan jika kata yang dicari tidak ditemukan, maka kata yang dicari akan dicari dengan kata yang lebih dekat.
+         *
+         *   2. SearchSourceBuilder : mengatur rules untuk mencari dan mengurutkan hasil pencarian
+         *    - SortOrder : menentukan urutan hasil pencarian
+         *    - ScoreSortBuilder : mengurutkan hasil pencarian berdasarkan score dari hasil pencarian
+         *
+         *   3. SearchRequest : membuat query hasil pencarian dengan rules yang telah ditentukan
+         * */
+        Map<String, Float> fields = new HashMap<>();
+        fields.put("attachment.content", 0.0f);
+        fields.put("attachment.content._2gram", 0.0f);
+        fields.put("attachment.content._3gram", 0.0f);
+        fields.put("attachment.title", 0.0f);
+
         MultiMatchQueryBuilder multiMatchQueryBuilder = new MultiMatchQueryBuilder(query)
-                .field("attachment.content")
+                .fields(fields)
+                .type(MultiMatchQueryBuilder.Type.BOOL_PREFIX)
                 .fuzziness(Fuzziness.AUTO);
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
                 .query(multiMatchQueryBuilder)
                 .sort(new ScoreSortBuilder().order(SortOrder.DESC));
 
-        SearchRequest searchRequest = new SearchRequest(indexName)
+        SearchRequest searchRequest = new SearchRequest()
                 .source(searchSourceBuilder);
 
         try {
 
             /*
-            *   Pada bagian ini akan dilakukan pencarian hasil pencarian dengan rules yang telah ditentukan
-            *
-            *   1. SearchResponse : mengambil hasil pencarian dari Elasticsearch dengan searchRequest yang sebelumnya telah dibuat
-            *
-            *   2. SearchHits : mengambil hasil pencarian dari SearchResponse yang sebelumnya telah dibuat
-            *
-            *   3. SearchHit : mengambil hasil pencarian dari SearchHits
-            * */
+             *   Pada bagian ini akan dilakukan pencarian hasil pencarian dengan rules yang telah ditentukan
+             *
+             *   1. SearchResponse : mengambil hasil pencarian dari Elasticsearch dengan searchRequest yang sebelumnya telah dibuat
+             *
+             *   2. SearchHits : mengambil hasil pencarian dari SearchResponse yang sebelumnya telah dibuat
+             *
+             *   3. SearchHit : mengambil hasil pencarian dari SearchHits
+             * */
             SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
             SearchHits hits = searchResponse.getHits();
 
             SearchHit[] searchHits = hits.getHits();
 
 
-            if(searchHits.length > 0){
+            if (searchHits.length > 0) {
                 for (SearchHit hit : searchHits) {
                     Map<String, Object> sourceAsMap = hit.getSourceAsMap();
                     Map<String, Object> attachment = (HashMap<String, Object>) sourceAsMap.get("attachment");
                     ObjectMapper mapper = new ObjectMapper();
                     pdfDocuments.add(mapper.convertValue(attachment, PDFDocument.class));
-                    log.debug("pdfDocumentsSize : {}", pdfDocuments.size());
+                    log.info("pdfDocuments : {}", attachment.toString());
                 }
                 return pdfDocuments;
-            }else{
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            log.error("Error while searching for documents {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /*
+     * Fungsi searchAll
+     * akan melakukan pencarian secara menyeluruh terhadap sebuah index
+     * Kemudian fungsi ini akan mengembalikan list dari hasil pencarian jika ada
+     * Namun, jika tidak ada hasil pencarian yang ditemukan maka fungsi ini akan mengembalikan nilai NULL
+     * */
+
+    public List<PDFDocument> sarchAll() {
+        List<PDFDocument> pdfDocuments = new ArrayList<>();
+        try {
+            SearchRequest searchRequest = new SearchRequest(indexName);
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+            searchRequest.source(searchSourceBuilder);
+            SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+            SearchHits hits = searchResponse.getHits();
+            SearchHit[] searchHits = hits.getHits();
+            if (searchHits.length > 0) {
+                for (SearchHit hit : searchHits) {
+                    Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+                    Map<String, Object> attachment = (HashMap<String, Object>) sourceAsMap.get("attachment");
+                    ObjectMapper mapper = new ObjectMapper();
+                    pdfDocuments.add(mapper.convertValue(attachment, PDFDocument.class));
+                }
+                return pdfDocuments;
+            } else {
                 return null;
             }
         } catch (IOException e) {

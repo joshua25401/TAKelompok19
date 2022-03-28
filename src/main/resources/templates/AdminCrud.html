@@ -15,7 +15,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-xl navbar-light bg-light">
-        <a href="#" class="navbar-brand"><i class="fa fa-cube"></i>Elasticsearch</b></a>
+        <a href="#" class="navbar-brand"><b><i class="fa fa-cube"></i>Elasticsearch</b></a>
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -34,12 +34,14 @@
                 <div class="nav-item dropdown">
                     <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action">Admin<b class="caret"></b></a>
                     <div class="dropdown-menu">
-                        <a href="/" class="dropdown-item"><i class="material-icons">&#xE8AC;</i> Logout</a></a>
+                        <a th:href="@{/admin/logout}" class="dropdown-item"><i class="material-icons">&#xE8AC;</i> Logout</a>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
+
+
     <div class="container-xl">
         <div class="table-responsive">
             <div class="table-wrapper">
@@ -143,7 +145,7 @@
                         </div>
                         <div class="form-group">
                             <label>Upload File</label>
-                            <input type="file" class="form-control" name="file"required>
+                            <input type="file" class="form-control" name="file" required>
                         </div>					
                     </div>
                     <div class="modal-footer">
@@ -178,7 +180,7 @@
                         </div>	
                         <div class="form-group">
                             <label>Prodi</label>
-                            <input type="text" class="form-control" required></textarea>
+                            <input type="text" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label>Prodi</label>
