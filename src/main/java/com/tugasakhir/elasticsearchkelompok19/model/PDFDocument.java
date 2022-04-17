@@ -16,19 +16,23 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PDFDocument implements Serializable {
-
-    @SerializedName("content_type")
-    private String contentType;
-
-    @SerializedName("content")
-    private String content;
-
     @SerializedName("title")
     private String title;
 
     @SerializedName("file_name")
-    private String fileName;
+    private String file_name;
 
     @SerializedName("authors")
     private List<String> authors;
+
+    @SerializedName("author")
+    private String author;
+
+    @SerializedName("prodi")
+    private String prodi;
+
+    @SerializedName("attachment")
+    private Attachment attachment;
+
+    private List<String> highlight;
 }

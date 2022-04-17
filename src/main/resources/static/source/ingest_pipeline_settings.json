@@ -1,0 +1,13 @@
+{
+  "description" : "Extract Attachment Information",
+  "processors" : [{
+      "attachment" : {
+          "field" : "data",
+          "indexed_chars" : -1,
+          "properties" : ["content","content_type"]
+      },
+      "remove" : {
+        "field" : "data"
+      }
+  }]
+}

@@ -13,6 +13,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.ScoreSortBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,14 +104,12 @@ public class SearchServices {
 
             SearchHit[] searchHits = hits.getHits();
 
-
             if (searchHits.length > 0) {
                 for (SearchHit hit : searchHits) {
                     Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-                    Map<String, Object> attachment = (HashMap<String, Object>) sourceAsMap.get("attachment");
                     ObjectMapper mapper = new ObjectMapper();
-                    pdfDocuments.add(mapper.convertValue(attachment, PDFDocument.class));
-                    log.info("pdfDocuments : {}", attachment.toString());
+                    pdfDocuments.add(mapper.convertValue(sourceAsMap, PDFDocument.class));
+                    log.info("pdfDocuments : {}", sourceAsMap.toString());
                 }
                 return pdfDocuments;
             } else {
@@ -133,18 +132,19 @@ public class SearchServices {
         List<PDFDocument> pdfDocuments = new ArrayList<>();
         try {
             SearchRequest searchRequest = new SearchRequest(indexName);
-            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            searchSourceBuilder.query(QueryBuilders.matchAllQuery());
-            searchRequest.source(searchSourceBuilder);
+//            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+//            searchSourceBuilder.query(QueryBuilders.);
+//            searchRequest.source(searchSourceBuilder);
+
             SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
             SearchHits hits = searchResponse.getHits();
             SearchHit[] searchHits = hits.getHits();
             if (searchHits.length > 0) {
                 for (SearchHit hit : searchHits) {
                     Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-                    Map<String, Object> attachment = (HashMap<String, Object>) sourceAsMap.get("attachment");
                     ObjectMapper mapper = new ObjectMapper();
-                    pdfDocuments.add(mapper.convertValue(attachment, PDFDocument.class));
+                    pdfDocuments.add(mapper.convertValue(sourceAsMap, PDFDocument.class));
+//                    log.info(String.valueOf(attachment));
                 }
                 return pdfDocuments;
             } else {

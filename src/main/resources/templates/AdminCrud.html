@@ -55,14 +55,13 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Table -->
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th>
-                                <span class="custom-checkbox">
-                                    <input type="checkbox" id="selectAll">
-                                    <label for="selectAll"></label>
-                                </span>
+                                No.
                             </th>
                             <th>Name Penulis</th>
                             <th>Judul Tugas Akhir</th>
@@ -72,17 +71,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr th:each="pdf : ${listPdf}">
                             <td>
-                                <span class="custom-checkbox">
-                                    <input type="checkbox" id="checkbox1" name="options[]" value="1">
-                                    <label for="checkbox1"></label>
-                                </span>
+                                1
                             </td>
-                            <td>Thomas Hardy</td>
-                            <td>Implementasi Elasticsearch </td>
-                            <td>Elasticsearch merupakan mesin pencari dan analitik terdistribusi yang dibangun pada Apache Lucene. Sejak diluncurkan pada tahun 2010, Elasticsearch telah dengan cepat menjadi mesin pencari paling populer dan biasa digunakan untuk analisis log, pencarian teks lengkap, inteligensi keamanan, analisis bisnis, dan kasus penggunaan inteligensi operasional.</td>
-                            <td>D3 TI</td>
+                            <td th:text="${pdf.getAuthors().get(0)}"></td>
+                            <td th:text="${pdf.getTitle()}"></td>
+                            <td th:text="${pdf.attachment.getContent_type()}"></td>
+                            <td th:text="${pdf.getProdi()}"></td>
                             <td>
                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
                                 <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
@@ -106,38 +102,39 @@
             </div>
         </div>        
     </div>
+    <!--END TABLE-->
+
     <!-- Edit Modal HTML -->
-    <div id="addEmployeeModal" class="modal fade">
+    <div id="addEmployeeModal" class="modal fade" data-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form>
+                <form th:action="@{/admin/upload}" method="POST" enctype="multipart/form-data">
                     <div class="modal-header">						
                         <h4 class="modal-title">Tambah Dokumen</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body">					
                         <div class="form-group">
                             <label>Name Penulis </label>
-                            <input type="text" class="form-control" required>
+                            <input type="text" class="form-control" autocomplete="off" name="author" required>
                         </div>
                         <div class="form-group">
                             <label>Judul Tugas Akhir</label>
-                            <input type="text" class="form-control" required>
+                            <input type="text" class="form-control" autocomplete="off" name="title" required>
                         </div>
                         <div class="form-group">
                             <label>Deskripsi Tugas Akhir</label>
-                            <textarea class="form-control" required></textarea>
+                            <textarea class="form-control" autocomplete="off" required></textarea>
                         </div>
                         <div class="form-group">
                             <label>Prodi</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+                                <input class="form-check-input" type="radio" name="prodi" id="d3ti" value="D3 TI" checked>
                                 <label class="form-check-label" for="gridRadios1">
                                   D3 Teknologi Informasi
                                 </label>
                               </div>
                               <div class="form-check">
-                                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                                <input class="form-check-input" type="radio" name="prodi" id="d3tk" value="D3 TK">
                                 <label class="form-check-label" for="gridRadios2">
                                   D3 Teknologi Komputer
                                 </label>
@@ -149,7 +146,7 @@
                         </div>					
                     </div>
                     <div class="modal-footer">
-                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="button" class="btn btn-secondary" data-dismiss="modal" value="Cancel">
                         <input type="submit" class="btn btn-success" value="Add">
                     </div>
                 </form>
