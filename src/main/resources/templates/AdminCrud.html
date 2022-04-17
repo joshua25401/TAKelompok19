@@ -15,15 +15,12 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-xl navbar-light bg-light">
-        <a href="#" class="navbar-brand"><b><i class="fa fa-cube"></i>Elasticsearch</b></a>
+        <a href="/"><img src="/img/logo.jpg" class="logo"></a>
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
         <!-- Collection of nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
-            <div class="navbar-nav">
-                <a href="/" class="nav-item nav-link active">Home</a>
-            </div>
             <form class="navbar-form form-inline">
                 <div class="input-group search-box">								
                     <input type="text" id="search" class="form-control" placeholder="Search by Name">
@@ -32,7 +29,10 @@
             </form>
             <div class="navbar-nav ml-auto">
                 <div class="nav-item dropdown">
-                    <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action">Admin<b class="caret"></b></a>
+                    <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-person" viewBox="0 0 16 16">
+                        <path d="M12 1a1 1 0 0 1 1 1v10.755S12 11 8 11s-5 1.755-5 1.755V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z"/>
+                        <path d="M8 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                      </svg>Admin<b class="caret"></b></a>
                     <div class="dropdown-menu">
                         <a th:href="@{/admin/logout}" class="dropdown-item"><i class="material-icons">&#xE8AC;</i> Logout</a>
                     </div>
@@ -63,11 +63,11 @@
                             <th>
                                 No.
                             </th>
-                            <th>Name Penulis</th>
+                            <th>Nama Penulis</th>
                             <th>Judul Tugas Akhir</th>
                             <th>Deskripsi</th>
                             <th>Prodi</th>
-                            <th>Actions</th>
+                            <th colspan="3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,7 +80,12 @@
                             <td th:text="${pdf.attachment.getContent_type()}"></td>
                             <td th:text="${pdf.getProdi()}"></td>
                             <td>
+                                <a href="#" class="view" title="View" data-toggle="tooltip"><i class="material-icons">&#xE417;</i></a>
+                            </td>
+                            <td>
                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+                            </td>
+                            <td>
                                 <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
                             </td>
                         </tr>

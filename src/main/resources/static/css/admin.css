@@ -11,13 +11,13 @@
 	border-bottom: 1px solid #d6d6d6;
 	box-shadow: 0 0 4px rgba(0,0,0,.1);
 }
-.nav-link img {
-	border-radius: 50%;
-	width: 36px;
-	height: 36px;
-	margin: -8px 0;
+.logo{
+	border-radius: 25%;
+	width: 50px;
+	height: 50px;
+	margin: 8px 0;
 	float: left;
-	margin-right: 10px;
+	margin-right: 20px;
 }
 .navbar .navbar-brand {
 	color: #555;
