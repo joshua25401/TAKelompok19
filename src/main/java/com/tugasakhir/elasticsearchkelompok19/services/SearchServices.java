@@ -31,7 +31,7 @@ import java.util.*;
 @Service
 public class SearchServices {
     /*Logger*/
-    final Logger log = LoggerFactory.getLogger(DocumentServices.class);
+    final Logger log = LoggerFactory.getLogger(SearchServices.class);
 
     /*Elasticsearch Configuration*/
     @Value("${elasticsearch.index}")
@@ -124,7 +124,6 @@ public class SearchServices {
                         pdfDocuments.get(counter).getHighlight().add(fragment.string());
                     }
                     counter++;
-                    log.info("pdfDocuments : {}", fragments.toString());
                 }
                 return pdfDocuments;
             } else {

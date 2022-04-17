@@ -43,7 +43,7 @@
             <form id="form_search" method="get">
                 <div class="mb-3">
                     <label class="form-label">Cari Artikel</label>
-                    <input type="text" class="form-control keyword" id="keyword" name="keyword" placeholder="Cari disini...">
+                    <input type="text" th:value="${keyword}" class="form-control keyword" id="keyword" name="keyword" placeholder="Cari disini...">
                 </div>
                 <button type="submit" class="btn btn-warning text-white">Cari</button>
             </form>

@@ -81,7 +81,7 @@
                             <td th:text="${pdf.attachment.getContent_type()}"></td>
                             <td th:text="${pdf.getProdi()}"></td>
                             <td>
-                                <a href="E:\JavaEE Project\TA\elasticsearch-kelompok19\src\main\resources\uploaded-pdf\LnBkZg==1650189191679.pdf" target="_blank"><i class="material-icons">&#xE417;</i></a>
+                                <a th:with="docId = ${pdf.getFile_name()}" th:href="@{${'/admin/showFile/' + docId}}" target="_blank"><i class="material-icons">&#xE417;</i></a>
                             </td>
                             <td>
                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>

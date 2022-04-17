@@ -7,6 +7,8 @@ import org.elasticsearch.ElasticsearchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +17,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,6 +77,23 @@ public class AdminController {
             e.printStackTrace();
         }
         return "redirect:/";
+    }
+
+    @GetMapping(value = "/showFile/{docId}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public InputStreamResource showPdf(@PathVariable("docId") String documentId){
+        try{
+            File pdfFile = services.getFile(documentId);
+            if(pdfFile != null){
+                InputStream fileToOpen = new FileInputStream(pdfFile);
+                return new InputStreamResource(fileToOpen);
+            }else{
+                log.info("Error Getting File!");
+            }
+        }catch (Exception e){
+            log.info("FILE OPERATION ERROR : " + e.getMessage());
+        }
+        return null;
     }
 
     @GetMapping(value = "/delete/{docId}")

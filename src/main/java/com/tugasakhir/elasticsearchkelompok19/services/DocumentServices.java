@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -143,6 +144,15 @@ public class DocumentServices {
             log.info("INFO : " + "File not Exist!");
         }
         return deleteResponse.getResult() == DocWriteResponse.Result.DELETED;
+    }
+
+    public File getFile(String docName) throws IOException, FileNotFoundException {
+        Path path = Paths.get("").toAbsolutePath().resolve(pdfLocalPath + docName);
+        if(Files.exists(path)){
+            File file = path.toFile();
+            return file;
+        }
+        return null;
     }
 
     private boolean pipelineExists(String pipeLine) throws IOException {
