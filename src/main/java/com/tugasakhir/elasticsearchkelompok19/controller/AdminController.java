@@ -74,17 +74,18 @@ public class AdminController {
         return "redirect:/";
     }
 
-    @PostMapping(value = "/delete")
+    @GetMapping(value = "/delete/{docId}")
     public String deleteDocument(
-            @RequestParam("docId") String documentId
+            @PathVariable("docId") String documentId
     ){
         try{
             if(services.delete(documentId)){
-                log.info("SUCCESS DELETE DOC WITH ID : ", documentId);
+                log.info("SUCCESS DELETE DOC WITH ID : " + documentId);
+                listPdf = dataServices.sarchAll();
                 return "redirect:/admin/";
             }
         }catch (IOException | ElasticsearchException e){
-            log.info("ERROR : ", e.getMessage());
+            log.info("ERROR : " + e.getMessage());
         }
         return "redirect:/";
     }

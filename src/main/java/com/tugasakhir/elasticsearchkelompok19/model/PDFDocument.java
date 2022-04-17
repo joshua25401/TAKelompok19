@@ -6,13 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.elasticsearch.common.text.Text;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PDFDocument implements Serializable {
@@ -35,4 +36,8 @@ public class PDFDocument implements Serializable {
     private Attachment attachment;
 
     private List<String> highlight;
+
+    public PDFDocument(){
+        this.highlight = new ArrayList<String>();
+    }
 }

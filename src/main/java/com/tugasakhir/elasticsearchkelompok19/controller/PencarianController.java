@@ -45,10 +45,6 @@ public class PencarianController {
         model.addAttribute("listPdf", listPdf != null ? listPdf : "empty");
 
         log.info("Searching for " + keyword);
-
-//        if (listPdf != null) {
-//            return "redirect:/pencarian";
-//        }
         return new ModelAndView("forward:/pencarian",model);
     }
     

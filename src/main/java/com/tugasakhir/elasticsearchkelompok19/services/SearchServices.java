@@ -6,12 +6,15 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.ScoreSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -19,13 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.elasticsearch.core.query.highlight.Highlight;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class SearchServices {
@@ -71,18 +72,25 @@ public class SearchServices {
          *   3. SearchRequest : membuat query hasil pencarian dengan rules yang telah ditentukan
          * */
         Map<String, Float> fields = new HashMap<>();
-        fields.put("attachment.content", 0.0f);
-        fields.put("attachment.content._2gram", 0.0f);
-        fields.put("attachment.content._3gram", 0.0f);
-        fields.put("attachment.title", 0.0f);
+        fields.put("attachment.content", 0.50f);
+        fields.put("attachment.content._2gram", 0.10f);
+        fields.put("attachment.content._3gram", 0.05f);
+        fields.put("title", 0.0f);
 
         MultiMatchQueryBuilder multiMatchQueryBuilder = new MultiMatchQueryBuilder(query)
                 .fields(fields)
                 .type(MultiMatchQueryBuilder.Type.BOOL_PREFIX)
                 .fuzziness(Fuzziness.AUTO);
 
+
+        HighlightBuilder highlightBuilder = new HighlightBuilder()
+                .preTags("<b>")
+                .postTags("</b>")
+                .field(new HighlightBuilder.Field("attachment.content"));
+
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
                 .query(multiMatchQueryBuilder)
+                .highlighter(highlightBuilder)
                 .sort(new ScoreSortBuilder().order(SortOrder.DESC));
 
         SearchRequest searchRequest = new SearchRequest()
@@ -103,13 +111,20 @@ public class SearchServices {
             SearchHits hits = searchResponse.getHits();
 
             SearchHit[] searchHits = hits.getHits();
-
+            int counter = 0;
             if (searchHits.length > 0) {
                 for (SearchHit hit : searchHits) {
                     Map<String, Object> sourceAsMap = hit.getSourceAsMap();
                     ObjectMapper mapper = new ObjectMapper();
                     pdfDocuments.add(mapper.convertValue(sourceAsMap, PDFDocument.class));
-                    log.info("pdfDocuments : {}", sourceAsMap.toString());
+                    Map<String,HighlightField> highlightfields = hit.getHighlightFields();
+                    HighlightField field = highlightfields.get("attachment.content");
+                    Text[] fragments = field.fragments();
+                    for(Text fragment : fragments){
+                        pdfDocuments.get(counter).getHighlight().add(fragment.string());
+                    }
+                    counter++;
+                    log.info("pdfDocuments : {}", fragments.toString());
                 }
                 return pdfDocuments;
             } else {
@@ -143,7 +158,7 @@ public class SearchServices {
                 for (SearchHit hit : searchHits) {
                     Map<String, Object> sourceAsMap = hit.getSourceAsMap();
                     ObjectMapper mapper = new ObjectMapper();
-                    pdfDocuments.add(mapper.convertValue(sourceAsMap, PDFDocument.class));
+                    pdfDocuments.add(mapper.convertValue(sourceAsMap    , PDFDocument.class));
 //                    log.info(String.valueOf(attachment));
                 }
                 return pdfDocuments;

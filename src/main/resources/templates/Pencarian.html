@@ -40,10 +40,10 @@
     <div class="card mt-5">
 
         <div class="card-body">
-            <form id="form_search" method="post">
+            <form id="form_search" method="get">
                 <div class="mb-3">
                     <label class="form-label">Cari Artikel</label>
-                    <input type="text" class="form-control" id="search" name="search" placeholder="Cari disini...">
+                    <input type="text" class="form-control keyword" id="keyword" name="keyword" placeholder="Cari disini...">
                 </div>
                 <button type="submit" class="btn btn-warning text-white">Cari</button>
             </form>
@@ -75,13 +75,12 @@
             <div class="list-group" th:each="pdf : ${listPdf}">
                 <div class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1" th:text="${pdf.attachment.getContent()}"></h5>
+                        <h3 class="mb-1" th:text="${pdf.getTitle()}"></h3>
                     </div>
-                    <p class="mb-1 text-muted"><small>Elasticsearch merupakan mesin pencari dan analitik terdistribusi
-                        yang dibangun pada Apache Lucene. Sejak diluncurkan pada tahun 2010, Elasticsearch telah dengan
-                        cepat menjadi mesin pencari paling populer dan biasa digunakan untuk analisis log, pencarian
-                        teks lengkap, inteligensi keamanan, analisis bisnis, dan kasus penggunaan inteligensi
-                        operasional.</small></p>
+                    <div class="d-flex w-100 justify-content-between">
+                        <p th:text="${pdf.getAuthors().toString()}"></p>
+                    </div>
+                    <p class="mb-1 text-muted" th:utext="${pdf.getHighlight()}"></p>
                     <button type="submit" class="btn btn-warning text-white">next</button>
                 </div>
                 </div>

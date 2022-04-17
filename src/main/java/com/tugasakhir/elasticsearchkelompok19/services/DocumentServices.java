@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -134,6 +135,13 @@ public class DocumentServices {
     public boolean delete(String docId) throws IOException,ElasticsearchException{
         DeleteRequest deleteRequest = new DeleteRequest(indexName,docId);
         DeleteResponse deleteResponse = client.delete(deleteRequest,RequestOptions.DEFAULT);
+        Path path = Paths.get("").toAbsolutePath().resolve(pdfLocalPath + docId);
+        if(Files.exists(path)){
+            Files.deleteIfExists(path);
+            log.info("SUCCESS DELETE : " + docId );
+        }else{
+            log.info("INFO : " + "File not Exist!");
+        }
         return deleteResponse.getResult() == DocWriteResponse.Result.DELETED;
     }
 
@@ -141,6 +149,7 @@ public class DocumentServices {
         GetPipelineRequest request = new GetPipelineRequest(pipeLine);
         GetPipelineResponse response = client.ingest().getPipeline(request, RequestOptions.DEFAULT);
         log.info("Check pipeline {} with response {}", pipeLine, response.isFound());
+
         return response.isFound();
     }
 
