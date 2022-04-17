@@ -41,10 +41,16 @@ public class PencarianController {
             ModelMap model
     ) {
         listPdf = services.fullTextSearch(keyword);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("listPdf", listPdf != null ? listPdf : "empty");
 
-        log.info("Searching for " + keyword);
+        if(listPdf != null){
+            model.addAttribute("keyword", keyword);
+            model.addAttribute("listPdf", listPdf != null ? listPdf : "empty");
+            log.info("Searching for keyword : " + keyword);
+            log.info("Got " + listPdf.size() + " PDF Data!");
+        }else{
+            log.info("No Data Found!");
+        }
+
         return new ModelAndView("forward:/pencarian",model);
     }
     

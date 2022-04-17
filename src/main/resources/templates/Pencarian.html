@@ -26,29 +26,24 @@
 <body>
     <nav class="navbar navbar-expand-xl navbar-light bg-light">
         <a href="/"><img src="/img/logo.jpg" class="logo"></a>
-        
-    
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="col-lg-8 mx-auto">
-			<h2><span>Search Engine Document</span></h2>
-            </div>
         <!-- Collection of nav links, forms, and other content for toggling -->
-        <!-- <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
+        <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
             <div class="navbar-nav">
-                 <a href="/" class="nav-item nav-link active"><b>Home</b></a> 
+                <!-- <a href="/" class="nav-item nav-link active"><b>Home</b></a> -->
             </div>
-        </div> -->
+        </div>
     </nav>
 <div class="container">
     <div class="card mt-5">
 
         <div class="card-body">
-            <form id="form_search" method="post">
+            <form id="form_search" method="get">
                 <div class="mb-3">
                     <label class="form-label">Cari Artikel</label>
-                    <input type="text" class="form-control" id="search" name="search" placeholder="Cari disini...">
+                    <input type="text" th:value="${keyword}" class="form-control keyword" id="keyword" name="keyword" placeholder="Cari disini...">
                 </div>
                 <button type="submit" class="btn btn-warning text-white">Cari</button>
             </form>
@@ -80,16 +75,13 @@
             <div class="list-group" th:each="pdf : ${listPdf}">
                 <div class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1" th:text="${pdf.attachment.getContent()}"></h5>
+                        <h3 class="mb-1" th:text="${pdf.getTitle()}"></h3>
                     </div>
-                    <div>
-                    <p class="mb-1 text-muted"><small>Elasticsearch merupakan mesin pencari dan analitik terdistribusi
-                        yang dibangun pada Apache Lucene. Sejak diluncurkan pada tahun 2010, Elasticsearch telah dengan
-                        cepat menjadi mesin pencari paling populer dan biasa digunakan untuk analisis log, pencarian
-                        teks lengkap, inteligensi keamanan, analisis bisnis, dan kasus penggunaan inteligensi
-                        operasional.</small></p>
-                        <a href="#" class="btn btn-primary">More <i class="fa fa-angle-right"></i></a>
+                    <div class="d-flex w-100 justify-content-between">
+                        <p th:text="${pdf.getAuthors().toString()}"></p>
                     </div>
+                    <p class="mb-1 text-muted" th:utext="${pdf.getHighlight()}"></p>
+                    <a th:with="documentId = ${pdf.getFile_name()}" th:href="@{${'/admin/showFile/' + documentId}}" class="btn btn-primary text-white">Show PDF</a>
                 </div>
                 </div>
             </div>

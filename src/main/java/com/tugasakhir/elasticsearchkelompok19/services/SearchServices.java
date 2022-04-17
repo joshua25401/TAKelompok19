@@ -9,20 +9,17 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.ScoreSortBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.elasticsearch.core.query.highlight.Highlight;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -158,7 +155,6 @@ public class SearchServices {
                     Map<String, Object> sourceAsMap = hit.getSourceAsMap();
                     ObjectMapper mapper = new ObjectMapper();
                     pdfDocuments.add(mapper.convertValue(sourceAsMap    , PDFDocument.class));
-//                    log.info(String.valueOf(attachment));
                 }
                 return pdfDocuments;
             } else {

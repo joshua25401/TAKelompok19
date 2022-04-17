@@ -86,6 +86,7 @@ public class AdminController {
             File pdfFile = services.getFile(documentId);
             if(pdfFile != null){
                 InputStream fileToOpen = new FileInputStream(pdfFile);
+                log.info("Showing PDF File : " + documentId);
                 return new InputStreamResource(fileToOpen);
             }else{
                 log.info("Error Getting File!");
