@@ -26,15 +26,20 @@
 <body>
     <nav class="navbar navbar-expand-xl navbar-light bg-light">
         <a href="/"><img src="/img/logo.jpg" class="logo"></a>
+        
+    
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- Collection of nav links, forms, and other content for toggling -->
-        <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
-            <div class="navbar-nav">
-                <!-- <a href="/" class="nav-item nav-link active"><b>Home</b></a> -->
+        <div class="col-lg-8 mx-auto">
+			<h2><span>Search Engine Document</span></h2>
             </div>
-        </div>
+        <!-- Collection of nav links, forms, and other content for toggling -->
+        <!-- <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
+            <div class="navbar-nav">
+                 <a href="/" class="nav-item nav-link active"><b>Home</b></a> 
+            </div>
+        </div> -->
     </nav>
 <div class="container">
     <div class="card mt-5">
@@ -77,12 +82,14 @@
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1" th:text="${pdf.attachment.getContent()}"></h5>
                     </div>
+                    <div>
                     <p class="mb-1 text-muted"><small>Elasticsearch merupakan mesin pencari dan analitik terdistribusi
                         yang dibangun pada Apache Lucene. Sejak diluncurkan pada tahun 2010, Elasticsearch telah dengan
                         cepat menjadi mesin pencari paling populer dan biasa digunakan untuk analisis log, pencarian
                         teks lengkap, inteligensi keamanan, analisis bisnis, dan kasus penggunaan inteligensi
                         operasional.</small></p>
-                    <button type="submit" class="btn btn-warning text-white">next</button>
+                        <a href="#" class="btn btn-primary">More <i class="fa fa-angle-right"></i></a>
+                    </div>
                 </div>
                 </div>
             </div>
