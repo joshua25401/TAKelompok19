@@ -1,6 +1,6 @@
 <html xmlns:th="http://thymeleaf.org">
 <head>
-    <title th:text="${keyword + '- Pencarian Dokumen'}"></title>
+    <title th:text="${keyword + ' - Pencarian Dokumen'}"></title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,24 +13,24 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-    <link th:href="@{/css/admin.css}" rel="stylesheet" />
+    <link th:href="@{/css/admin.css}" rel="stylesheet"/>
 
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-xl navbar-light bg-light">
-        <a href="/"><img src="/img/logo.jpg" class="logo"></a>
-        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <h2>Search Engine Document</h2>
-        <!-- Collection of nav links, forms, and other content for toggling -->
-        <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
-            <div class="navbar-nav">
-                <!-- <a href="/" class="nav-item nav-link active"><b>Home</b></a> -->
-            </div>
+<nav class="navbar navbar-expand-xl navbar-light bg-light">
+    <a href="/"><img src="/img/logo.jpg" class="logo"></a>
+    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <h2>Search Engine Document</h2>
+    <!-- Collection of nav links, forms, and other content for toggling -->
+    <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
+        <div class="navbar-nav">
+            <!-- <a href="/" class="nav-item nav-link active"><b>Home</b></a> -->
         </div>
-    </nav>
+    </div>
+</nav>
 <div class="container">
     <div class="card mt-5">
 
@@ -38,7 +38,8 @@
             <form id="form_search" method="get">
                 <div class="mb-3">
                     <label class="form-label">Cari Document</label>
-                    <input type="text" th:value="${keyword}" class="form-control keyword" id="keyword" name="keyword" placeholder="Cari disini...">
+                    <input type="text" th:value="${keyword}" class="form-control keyword" id="keyword" name="keyword"
+                           placeholder="Cari disini...">
                 </div>
                 <button type="submit" class="btn btn-warning text-white">Cari</button>
             </form>
@@ -46,7 +47,7 @@
     </div>
     <div class="list-group">
 
-        <div href="#" th:if='${listPdf == "empty"}' class="list-group-item list-group-item-action">
+        <div href="#" th:if='${listPdf == "empty"}'  class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1 text-center">
                     <center>Tidak ada data yang ditemukan</center>
@@ -54,6 +55,7 @@
             </div>
         </div>
     </div>
+
     <div class="card mt-5" th:if='${listPdf != "empty"}'>
         <div class="card-header">
             Hasil Pencarian
@@ -62,23 +64,28 @@
             <div class="hasil" id="hasil"></div>
             <hr>
             <h4 class="mb-3 text-center">Rekomendasi yang relevan dengan keyword</h4>
-            <div class="list-group" th:each="pdf : ${listPdf}">
+
+            <!--List PDF-->
+            <div class="list-group mt-5" th:each="pdf : ${listPdf}">
                 <div class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-between">
-                        <h3 class="mb-1" th:text="${pdf.getTitle()}"></h3>
+                        <h5 class="mb-1" th:text="${pdf.getTitle()}"></h5>
                     </div>
                     <div class="d-flex w-100 justify-content-between">
                         <p th:text="${pdf.getAuthors().toString()}"></p>
                     </div>
-                    <p class="mb-1 text-muted" th:utext="${pdf.getHighlight()}"></p>
-                    <a th:with="documentId = ${pdf.getFile_name()}" th:href="@{${'/pencarian/showFile/' + documentId}}" target="_blank" class="btn btn-primary text-white">Show PDF</a>
-                    <button class="btn down"><i class="fa fa-download"></i> Download</button>
+                    <p class="mb-1 text-muted" th:utext="${pdf.getHighlight().toString().toLowerCase()}"></p>
+                    <a th:with="documentId = ${pdf.getFile_name()}" th:href="@{${'/pencarian/showFile/' + documentId}}"
+                       target="_blank" class="btn btn-primary text-white">Show PDF</a>
+                    <a class="btn down" th:with="documentId = ${pdf.getFile_name()}" target="_blank" th:href="@{${'/pencarian/unduhFile/' + documentId}}"><i class="fa fa-download"></i> Download</a>
                     <hr>
                 </div>
-                </div>
             </div>
+            <!--END List PDF-->
+
         </div>
     </div>
+</div>
 </div>
 </body>
 </html>

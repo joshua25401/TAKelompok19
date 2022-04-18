@@ -2,6 +2,7 @@ package com.tugasakhir.elasticsearchkelompok19.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tugasakhir.elasticsearchkelompok19.model.PDFDocument;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -51,7 +52,7 @@ public class SearchServices {
      * Kemudian fungsi ini akan mengembalikan list dari hasil pencarian jika ada
      * Namun, jika tidak ada hasil pencarian yang ditemukan maka fungsi ini akan mengembalikan nilai NULL
      * */
-    public List<PDFDocument> fullTextSearch(String query) {
+    public List<PDFDocument> fullTextSearch(String query) throws ElasticsearchException {
 
         // List of PDFDocument hasil searching
         List<PDFDocument> pdfDocuments = new ArrayList<>();
@@ -70,20 +71,20 @@ public class SearchServices {
          * */
         Map<String, Float> fields = new HashMap<>();
         fields.put("attachment.content", 0.50f);
-        fields.put("attachment.content._2gram", 0.10f);
+        fields.put("attachment.content._2gram", 0.20f);
         fields.put("attachment.content._3gram", 0.05f);
         fields.put("title", 0.0f);
 
         MultiMatchQueryBuilder multiMatchQueryBuilder = new MultiMatchQueryBuilder(query)
                 .fields(fields)
-                .type(MultiMatchQueryBuilder.Type.BOOL_PREFIX)
-                .fuzziness(3);
+                .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
+                .fuzziness(Fuzziness.AUTO);
 
 
         HighlightBuilder highlightBuilder = new HighlightBuilder()
                 .preTags("<b>")
                 .postTags("</b>")
-                .field(new HighlightBuilder.Field("attachment.content"));
+                .field(new HighlightBuilder.Field("attachment.content").numOfFragments(10));
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder()
                 .query(multiMatchQueryBuilder)

@@ -53,7 +53,7 @@ public class AdminController {
         if (isLogin) {
             try{
                 listPdf = dataServices.sarchAll();
-                model.addAttribute("listPdf", listPdf);
+                model.addAttribute("listPdf", listPdf != null ? listPdf : "empty");
                 log.info("Success Get " + listPdf.size() + " PDF Data!");
                 return new ModelAndView("AdminCrud", model);
             }catch (Exception e){
@@ -84,26 +84,26 @@ public class AdminController {
 
     @GetMapping(value = "/showFile/{docId}", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<?> showPdf(@PathVariable("docId") String documentId){
+    public ResponseEntity<?> showPdf(@PathVariable("docId") String documentId) {
         HttpHeaders headers = new HttpHeaders();
-        try{
+        try {
             File pdfFile = services.getFile(documentId);
-            if(pdfFile != null){
+            if (pdfFile != null) {
                 InputStream fileToOpen = new FileInputStream(pdfFile);
                 log.info("Showing PDF File : " + documentId);
                 InputStreamResource resource = new InputStreamResource(fileToOpen);
-                headers.add("content-disposition","inline; filename=" + documentId);
+                headers.add("content-disposition", "inline; filename=" + documentId);
                 return ResponseEntity.ok()
                         .headers(headers)
                         .body(resource);
-            }else{
+            } else {
                 log.info("Error Getting File!");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info("FILE OPERATION ERROR : " + e.getMessage());
         }
-        headers.add("Location","/admin/");
-        return new ResponseEntity<byte[]>(null,headers, HttpStatus.FOUND);
+        headers.add("Location", "/admin/");
+        return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
     }
 
     @GetMapping(value = "/delete/{docId}")

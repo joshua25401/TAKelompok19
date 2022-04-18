@@ -66,10 +66,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="pdf : ${listPdf}">
-                            <td>
-                                1
-                            </td>
+                        <tr th:if="${listPdf == 'empty'}">
+                            <td colspan="8">Tidak Ada Data !</td>
+                        </tr>
+                        <tr th:if="${listPdf != 'empty'}" th:each="pdf,iterator : ${listPdf}">
+                            <td th:text="${iterator.count}"></td>
                             <td th:text="${pdf.getAuthors().get(0)}"></td>
                             <td th:text="${pdf.getTitle()}"></td>
                             <td th:text="${pdf.attachment.getContent_type()}"></td>
@@ -81,7 +82,7 @@
                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
                             </td>
                             <td>
-                                <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                                <a th:href="${'#deleteEmployeeModal' + iterator.count}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
                             </td>
                         </tr>
                         
@@ -104,6 +105,28 @@
     </div>
     <!--END TABLE-->
 
+    <!-- Delete Modal HTML -->
+    <div th:if="${listPdf != 'empty'}" th:each="pdf,iterator : ${listPdf}" th:id="${'deleteEmployeeModal' + iterator.count}" class="modal fade" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="get" th:action="@{${'/admin/delete/'  + pdf.getFile_name()}}">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete Dokumen</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Apakah anda yakin ingin menghapus dokumen ini?</p>
+                        <p class="text-warning"><small>Keputusan ini tidak bisa diulang!</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-danger" value="Delete">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Modal HTML -->
     <div id="addEmployeeModal" class="modal fade" data-backdrop="static">
         <div class="modal-dialog">
@@ -120,11 +143,7 @@
                         <div class="form-group">
                             <label>Judul Tugas Akhir</label>
                             <input type="text" class="form-control" autocomplete="off" name="title" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Ekstensi Tugas Akhir</label>
-                            <input type="text" class="form-control" autocomplete="off" name="title" required>
-                        </div>
+                        </div>\
                         <div class="form-group">
                             <label>Prodi</label>
                             <div class="form-check">
@@ -172,10 +191,6 @@
                             <input type="text" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label>Ekstensi Tugas Akhir</label>
-                            <input type="text" class="form-control" autocomplete="off" name="title" required>
-                        </div>	
-                        <div class="form-group">
                             <label>Prodi</label>
                             <input type="text" class="form-control" required>
                         </div>
@@ -203,26 +218,6 @@
             </div>
         </div>
     </div>
-    <!-- Delete Modal HTML -->
-    <div id="deleteEmployeeModal" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form>
-                    <div class="modal-header">						
-                        <h4 class="modal-title">Delete Dokumen</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <div class="modal-body">					
-                        <p>Are you sure you want to delete these Records?</p>
-                        <p class="text-warning"><small>This action cannot be undone.</small></p>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                        <input type="submit" class="btn btn-danger" value="Delete">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+
     </body>
     </html>
