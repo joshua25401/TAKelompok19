@@ -123,6 +123,7 @@
 	.input-group {
 		width: 100%;
 	}
+
 }
 
 /*  CSS CRUD*/
@@ -168,6 +169,7 @@ body {
 	border: none;
 	outline: none !important;
 	margin-left: 10px;
+
 }
 .table-title .btn i {
 	float: left;
@@ -346,7 +348,60 @@ table.table .avatar {
 .modal .btn {
 	border-radius: 2px;
 	min-width: 100px;
-}	
+}
+.btn.show {
+    border-radius: 2px;
+      background-color: #5d46e2;
+      border: none;
+      color: #FFFFFF;
+      text-align: center;
+      font-size: 13px;
+      padding: 10px;
+      width: 100px;
+      transition: all 0.5s;
+      cursor: pointer;
+      margin: 5px;
+      display: inline-block;
+      transition: 0.5s;
+
+}
+.btn.show span {
+       cursor: pointer;
+       display: inline-block;
+       position: relative;
+       transition: 0.5s;
+}
+
+.btn span:after {
+       content: '\00bb';
+       position: absolute;
+       opacity: 0;
+       top: 0;
+       right: -20px;
+       transition: 0.5s;
+}
+
+.btn:hover span {
+       padding-right: 15px;
+}
+
+.btn:hover span:after {
+       opacity: 1;
+       right: 0;
+}
+.btn.down {
+      border-radius: 2px;
+      background-color: 0000ff;
+      border: none;
+      color: #FFFFFF;
+      text-align: center;
+      font-size: 13px;
+      padding: 10px;
+      width: 100px;
+      display: inline-block;
+      float: right;
+}
+
 .modal form label {
 	font-weight: normal;
 }
