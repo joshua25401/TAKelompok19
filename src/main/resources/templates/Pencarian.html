@@ -1,12 +1,6 @@
 <html xmlns:th="http://thymeleaf.org">
 <head>
-    <!--
-        TODO :
-            1. Title diisi dengan keyword pencarian diikuti dengan (- hasil penelusuran)
-            cth :
-                - Samsung - hasil Penelusuran.
-    -->
-    <title th:text="${keyword}"></title>
+    <title th:text="${keyword + '- Pencarian Dokumen'}"></title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -64,11 +58,6 @@
             Hasil Pencarian
         </div>
         <div class="card-body">
-            <!--
-               TODO :
-                   Jika button selengkapnya di klik maka akan langsung mengirimkan request
-                   berupa pembukaan tab yang menampilkan pdf dari pencarian.
-            -->
             <div class="hasil" id="hasil"></div>
             <hr>
             <h4 class="mb-3 text-center">Rekomendasi yang relevan dengan keyword</h4>
@@ -81,7 +70,7 @@
                         <p th:text="${pdf.getAuthors().toString()}"></p>
                     </div>
                     <p class="mb-1 text-muted" th:utext="${pdf.getHighlight()}"></p>
-                    <a th:with="documentId = ${pdf.getFile_name()}" th:href="@{${'/admin/showFile/' + documentId}}" class="btn btn-primary text-white">Show PDF</a>
+                    <a th:with="documentId = ${pdf.getFile_name()}" th:href="@{${'/pencarian/showFile/' + documentId}}" target="_blank" class="btn btn-primary text-white">Show PDF</a>
                 </div>
                 </div>
             </div>

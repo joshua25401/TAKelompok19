@@ -15,7 +15,7 @@ import java.util.List;
 @Controller
 public class DashboardController {
 
-    Logger log = LoggerFactory.getLogger(DashboardController.class);
+    Logger log = LoggerFactory.getLogger(AdminController.class);
     List<PDFDocument> listPdf = new ArrayList<>();
 
     String username = "Admin";
