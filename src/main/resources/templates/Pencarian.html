@@ -23,6 +23,7 @@
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <h2>Search Engine Document</h2>
         <!-- Collection of nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
             <div class="navbar-nav">
@@ -36,7 +37,7 @@
         <div class="card-body">
             <form id="form_search" method="get">
                 <div class="mb-3">
-                    <label class="form-label">Cari Artikel</label>
+                    <label class="form-label">Cari Document</label>
                     <input type="text" th:value="${keyword}" class="form-control keyword" id="keyword" name="keyword" placeholder="Cari disini...">
                 </div>
                 <button type="submit" class="btn btn-warning text-white">Cari</button>
@@ -71,6 +72,8 @@
                     </div>
                     <p class="mb-1 text-muted" th:utext="${pdf.getHighlight()}"></p>
                     <a th:with="documentId = ${pdf.getFile_name()}" th:href="@{${'/pencarian/showFile/' + documentId}}" target="_blank" class="btn btn-primary text-white">Show PDF</a>
+                    <button class="btn down"><i class="fa fa-download"></i> Download</button>
+                    <hr>
                 </div>
                 </div>
             </div>
