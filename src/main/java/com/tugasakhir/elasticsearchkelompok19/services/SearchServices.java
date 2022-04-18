@@ -77,7 +77,7 @@ public class SearchServices {
         MultiMatchQueryBuilder multiMatchQueryBuilder = new MultiMatchQueryBuilder(query)
                 .fields(fields)
                 .type(MultiMatchQueryBuilder.Type.BOOL_PREFIX)
-                .fuzziness(Fuzziness.AUTO);
+                .fuzziness(3);
 
 
         HighlightBuilder highlightBuilder = new HighlightBuilder()

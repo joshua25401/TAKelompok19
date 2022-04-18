@@ -75,7 +75,7 @@
                             <td th:text="${pdf.attachment.getContent_type()}"></td>
                             <td th:text="${pdf.getProdi()}"></td>
                             <td>
-                                <a th:with="documentId = ${pdf.getFile_name()}" th:href="@{${'/admin/showFile/' + documentId}}" class="view" title="View PDF"><i class="material-icons">&#xE417;</i></a>
+                                <a th:with="documentId = ${pdf.getFile_name()}" target="_blank" th:href="@{${'/admin/showFile/' + documentId}}" class="view" title="View PDF"><i class="material-icons">&#xE417;</i></a>
                             </td>
                             <td>
                                 <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
