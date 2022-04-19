@@ -35,7 +35,7 @@
     <div class="card mt-5">
 
         <div class="card-body">
-            <form id="form_search" method="get">
+            <form id="form_search" method="get" th:action="@{/pencarian/search}">
                 <div class="mb-3">
                     <label class="form-label">Cari Document</label>
                     <input type="text" th:value="${keyword}" class="form-control keyword" id="keyword" name="keyword"
@@ -57,9 +57,7 @@
     </div>
 
     <div class="card mt-5" th:if='${listPdf != "empty"}'>
-        <div class="card-header">
-            Hasil Pencarian
-        </div>
+        <div class="card-header" th:text="${'Menemukan ' + listPdf.size() + ' PDF ( ' + tookTime + ' detik)'}"></div>
         <div class="card-body">
             <div class="hasil" id="hasil"></div>
             <hr>

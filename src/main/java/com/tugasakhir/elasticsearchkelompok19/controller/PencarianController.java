@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -32,6 +33,8 @@ public class PencarianController {
 
     /*List of Documents*/
     List<PDFDocument> listPdf = null;
+    List<Object> returnVal = null;
+    double tookTime = 0.0f;
 
     @Autowired
     SearchServices services;
@@ -40,7 +43,7 @@ public class PencarianController {
     DocumentServices documentServices;
 
     @GetMapping
-    public String showPencarian(){
+    public String showPencarian() {
         return "Pencarian";
     }
 
@@ -50,72 +53,78 @@ public class PencarianController {
             ModelMap model
     ) {
 
-        try{
+        try {
             log.info("Searching for keyword : " + keyword);
-            listPdf = services.fullTextSearch(keyword);
+            returnVal = services.fullTextSearch(keyword);
 
-            if(listPdf != null){
+            if (returnVal != null) {
+                listPdf = (List<PDFDocument>) returnVal.get(0);
+                tookTime = (double) returnVal.get(1);
+            }
+
+            if (listPdf != null) {
                 model.addAttribute("keyword", keyword);
                 model.addAttribute("listPdf", listPdf);
-                log.info("Got " + listPdf.size() + " PDF Data!");
-            }else{
+                model.addAttribute("tookTime",tookTime);
+                log.info("Got " + listPdf.size() + " PDF Data! within " + tookTime + " seconds");
+            } else {
                 model.addAttribute("keyword", keyword);
                 model.addAttribute("listPdf", "empty");
                 log.info("No Data Found!");
             }
 
-            return new ModelAndView("forward:/pencarian",model);
-        }catch (Exception e){
+            return new ModelAndView("forward:/pencarian", model);
+        } catch (Exception e) {
             log.info("ERROR : " + e.getMessage());
         }
         return new ModelAndView("redirect:/");
     }
 
-    @GetMapping(value = "/showFile/{docId}",produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/showFile/{docId}", produces = MediaType.APPLICATION_PDF_VALUE)
     @ResponseBody
-    public ResponseEntity<?> showPdf(@PathVariable("docId") String documentId){
+    public ResponseEntity<?> showPdf(@PathVariable("docId") String documentId) {
         HttpHeaders headers = new HttpHeaders();
-        try{
+        try {
             File pdfFile = documentServices.getFile(documentId);
-            if(pdfFile != null){
+            if (pdfFile != null) {
                 InputStream fileToOpen = new FileInputStream(pdfFile);
                 log.info("Showing PDF File : " + documentId);
                 InputStreamResource resource = new InputStreamResource(fileToOpen);
-                headers.add("content-disposition","inline; filename=" + documentId);
+                headers.add("content-disposition", "inline; filename=" + documentId);
                 return ResponseEntity.ok()
                         .headers(headers)
                         .body(resource);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info("FILE OPERATION ERROR : " + e.getMessage());
         }
-        headers.add("Location","/");
-        return new ResponseEntity<byte[]>(null,headers, HttpStatus.FOUND);
+        headers.add("Location", "/");
+        return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
     }
 
     @GetMapping(value = "/unduhFile/{docId}")
     @ResponseBody
-    public ResponseEntity<?> unduhPDF(@PathVariable("docId") String documentId){
+    public ResponseEntity<?> unduhPDF(@PathVariable("docId") String documentId) {
         HttpHeaders headers = new HttpHeaders();
 
-        try{
+        try {
             File pdfFile = documentServices.getFile(documentId);
 
-            if(pdfFile != null){
+            if (pdfFile != null) {
                 InputStream fileToDownload = new FileInputStream(pdfFile);
                 log.info("Downloading PDF File : " + documentId);
                 InputStreamResource downloadResource = new InputStreamResource(fileToDownload);
-                headers.add("content-disposition","attachment; filename=" + documentId);
+                headers.add("content-disposition", "attachment; filename=" + documentId);
                 return ResponseEntity.ok()
                         .headers(headers)
                         .contentType(MediaType.APPLICATION_PDF)
                         .body(downloadResource);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info("ERROR DOWNLOADING FILE : " + e.getMessage());
         }
-        headers.add("Location","/");
-        return new ResponseEntity<byte[]>(null,headers, HttpStatus.FOUND);
+        headers.add("Location", "/");
+        return new ResponseEntity<byte[]>(null, headers, HttpStatus.FOUND);
     }
-    
+
 }

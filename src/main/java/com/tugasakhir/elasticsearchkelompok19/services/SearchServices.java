@@ -1,6 +1,7 @@
 package com.tugasakhir.elasticsearchkelompok19.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tugasakhir.elasticsearchkelompok19.helper.Util;
 import com.tugasakhir.elasticsearchkelompok19.model.PDFDocument;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.SearchRequest;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.*;
 
 @Service
@@ -52,10 +54,11 @@ public class SearchServices {
      * Kemudian fungsi ini akan mengembalikan list dari hasil pencarian jika ada
      * Namun, jika tidak ada hasil pencarian yang ditemukan maka fungsi ini akan mengembalikan nilai NULL
      * */
-    public List<PDFDocument> fullTextSearch(String query) throws ElasticsearchException {
+    public List<Object> fullTextSearch(String query) throws ElasticsearchException {
 
         // List of PDFDocument hasil searching
         List<PDFDocument> pdfDocuments = new ArrayList<>();
+        List<Object> returnValue = new ArrayList<>();
 
         // Membuat SearchRequest berdasarkan rules yang digunakan.
         /*
@@ -77,7 +80,7 @@ public class SearchServices {
 
         MultiMatchQueryBuilder multiMatchQueryBuilder = new MultiMatchQueryBuilder(query)
                 .fields(fields)
-                .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
+                .type(MultiMatchQueryBuilder.Type.BOOL_PREFIX)
                 .fuzziness(Fuzziness.AUTO);
 
 
@@ -107,7 +110,6 @@ public class SearchServices {
              * */
             SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
             SearchHits hits = searchResponse.getHits();
-
             SearchHit[] searchHits = hits.getHits();
             int counter = 0;
             if (searchHits.length > 0) {
@@ -115,15 +117,17 @@ public class SearchServices {
                     Map<String, Object> sourceAsMap = hit.getSourceAsMap();
                     ObjectMapper mapper = new ObjectMapper();
                     pdfDocuments.add(mapper.convertValue(sourceAsMap, PDFDocument.class));
-                    Map<String,HighlightField> highlightfields = hit.getHighlightFields();
+                    Map<String, HighlightField> highlightfields = hit.getHighlightFields();
                     HighlightField field = highlightfields.get("attachment.content");
                     Text[] fragments = field.fragments();
-                    for(Text fragment : fragments){
+                    for (Text fragment : fragments) {
                         pdfDocuments.get(counter).getHighlight().add(fragment.string());
                     }
                     counter++;
                 }
-                return pdfDocuments;
+                returnValue.add(pdfDocuments);
+                returnValue.add(searchResponse.getTook().getSecondsFrac());
+                return returnValue;
             } else {
                 return null;
             }
@@ -155,7 +159,7 @@ public class SearchServices {
                 for (SearchHit hit : searchHits) {
                     Map<String, Object> sourceAsMap = hit.getSourceAsMap();
                     ObjectMapper mapper = new ObjectMapper();
-                    pdfDocuments.add(mapper.convertValue(sourceAsMap    , PDFDocument.class));
+                    pdfDocuments.add(mapper.convertValue(sourceAsMap, PDFDocument.class));
                 }
                 return pdfDocuments;
             } else {

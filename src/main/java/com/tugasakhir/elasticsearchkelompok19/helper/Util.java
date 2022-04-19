@@ -10,12 +10,12 @@ import java.nio.file.Files;
 public class Util {
     private static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
-    public static final String loadString(String path){
-        try{
+    public static String loadString(String path) {
+        try {
             final File resource = new ClassPathResource(path).getFile();
             return new String(Files.readAllBytes(resource.toPath()));
-        }catch(Exception e){
-            LOG.error(e.getMessage(),e);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             return null;
         }
     }

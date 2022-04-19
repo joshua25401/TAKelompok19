@@ -74,9 +74,10 @@ public class AdminController {
         try {
             if(services.upload(doc,file)){
                 log.info("Retrieved & Uploaded Doc {}", doc);
+                Thread.sleep(2000);
                 return "redirect:/admin/";
             }
-        } catch (IOException | ElasticsearchException e) {
+        } catch (IOException | ElasticsearchException | InterruptedException e) {
             e.printStackTrace();
         }
         return "redirect:/";

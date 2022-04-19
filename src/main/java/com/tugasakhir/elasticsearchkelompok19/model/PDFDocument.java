@@ -37,7 +37,10 @@ public class PDFDocument implements Serializable {
 
     private List<String> highlight;
 
+    private double took;
+
     public PDFDocument(){
         this.highlight = new ArrayList<String>();
+        this.took = 0.00f;
     }
 }
