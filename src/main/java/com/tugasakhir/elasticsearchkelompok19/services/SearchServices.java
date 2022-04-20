@@ -54,11 +54,11 @@ public class SearchServices {
      * Kemudian fungsi ini akan mengembalikan list dari hasil pencarian jika ada
      * Namun, jika tidak ada hasil pencarian yang ditemukan maka fungsi ini akan mengembalikan nilai NULL
      * */
-    public List<Object> fullTextSearch(String query) throws ElasticsearchException {
+    public Map<String,Object> fullTextSearch(String query) throws ElasticsearchException {
 
         // List of PDFDocument hasil searching
         List<PDFDocument> pdfDocuments = new ArrayList<>();
-        List<Object> returnValue = new ArrayList<>();
+        Map<String,Object> returnValue = new HashMap<>();
 
         // Membuat SearchRequest berdasarkan rules yang digunakan.
         /*
@@ -73,15 +73,15 @@ public class SearchServices {
          *   3. SearchRequest : membuat query hasil pencarian dengan rules yang telah ditentukan
          * */
         Map<String, Float> fields = new HashMap<>();
-        fields.put("attachment.content", 0.50f);
-        fields.put("attachment.content._2gram", 0.20f);
-        fields.put("attachment.content._3gram", 0.05f);
+        fields.put("attachment.content", 10.0f);
+        fields.put("attachment.content._2gram", 5.0f);
+        fields.put("attachment.content._3gram", 2.5f);
         fields.put("title", 0.0f);
 
         MultiMatchQueryBuilder multiMatchQueryBuilder = new MultiMatchQueryBuilder(query)
                 .fields(fields)
                 .type(MultiMatchQueryBuilder.Type.BOOL_PREFIX)
-                .fuzziness(Fuzziness.AUTO);
+                .fuzziness(2);
 
 
         HighlightBuilder highlightBuilder = new HighlightBuilder()
@@ -122,11 +122,13 @@ public class SearchServices {
                     Text[] fragments = field.fragments();
                     for (Text fragment : fragments) {
                         pdfDocuments.get(counter).getHighlight().add(fragment.string());
+                        pdfDocuments.get(counter).setScore(hit.getScore());
                     }
                     counter++;
                 }
-                returnValue.add(pdfDocuments);
-                returnValue.add(searchResponse.getTook().getSecondsFrac());
+                returnValue.put("listPDF",pdfDocuments);
+                returnValue.put("tookTime",searchResponse.getTook().getSecondsFrac());
+                returnValue.put("maxScore",hits.getMaxScore());
                 return returnValue;
             } else {
                 return null;
@@ -148,9 +150,6 @@ public class SearchServices {
         List<PDFDocument> pdfDocuments = new ArrayList<>();
         try {
             SearchRequest searchRequest = new SearchRequest(indexName);
-//            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-//            searchSourceBuilder.query(QueryBuilders.);
-//            searchRequest.source(searchSourceBuilder);
 
             SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
             SearchHits hits = searchResponse.getHits();

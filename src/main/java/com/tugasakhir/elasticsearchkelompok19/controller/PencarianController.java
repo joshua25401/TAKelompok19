@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/pencarian")
@@ -30,11 +31,6 @@ public class PencarianController {
 
     /*Logger*/
     final Logger log = LoggerFactory.getLogger(PencarianController.class);
-
-    /*List of Documents*/
-    List<PDFDocument> listPdf = null;
-    List<Object> returnVal = null;
-    double tookTime = 0.0f;
 
     @Autowired
     SearchServices services;
@@ -52,20 +48,27 @@ public class PencarianController {
             @RequestParam("keyword") String keyword,
             ModelMap model
     ) {
+        /*List of Documents*/
+        List<PDFDocument> listPdf = null;
+        Map<String,Object> returnVal = null;
+        double tookTime = 0.0f;
+        float maxScore = 0.0f;
 
         try {
             log.info("Searching for keyword : " + keyword);
             returnVal = services.fullTextSearch(keyword);
 
             if (returnVal != null) {
-                listPdf = (List<PDFDocument>) returnVal.get(0);
-                tookTime = (double) returnVal.get(1);
+                listPdf = (List<PDFDocument>) returnVal.getOrDefault("listPDF",null);
+                tookTime = (double) returnVal.getOrDefault("tookTime",0.0f);
+                maxScore = (float) returnVal.getOrDefault("maxScore",0.0f);
             }
 
             if (listPdf != null) {
                 model.addAttribute("keyword", keyword);
                 model.addAttribute("listPdf", listPdf);
                 model.addAttribute("tookTime",tookTime);
+                model.addAttribute("maxScore", maxScore);
                 log.info("Got " + listPdf.size() + " PDF Data! within " + tookTime + " seconds");
             } else {
                 model.addAttribute("keyword", keyword);
